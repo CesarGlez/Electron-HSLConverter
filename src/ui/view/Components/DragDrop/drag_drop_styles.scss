@@ -1,0 +1,98 @@
+@use "/src/ui/styles/utils.scss" as util;
+@use "/src/ui/styles/fonts.scss" as fonts;
+
+.drop-zone {
+   position: relative;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   width: 80%;
+   height: util.px_to_vw(300);
+   padding: 25px;
+   border: 4px dashed #A1FF7D;
+   border-radius: 10px;
+   overflow: hidden;
+
+   .upload-icon {
+      width: util.px_to_vw(80);
+      height: util.px_to_vw(80);
+      filter: invert(81%) sepia(49%) saturate(437%) hue-rotate(49deg) brightness(103%) contrast(101%);
+   }
+
+   p {
+      @include fonts.family-Helvetica-Now-Text-Medium;
+      color: #cccccc;
+      font-size: util.px_to_vw(40);
+   }
+   
+   .btn-upload {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: util.px_to_vw(450);
+      height: util.px_to_vw(80);
+      background-color: #fff;
+      border-radius: 5px;
+      transition: all 0.5s ease;
+      cursor: pointer;
+
+      &:hover {
+         transform: scale(1.1);
+      }
+      
+      p {
+         @include fonts.family-Helvetica-Now-Text-Medium;
+         color: #000;
+         font-size: util.px_to_vw(30);
+      }
+   }
+
+   input[type="file"] {
+      display: none;
+   }
+
+   .overlay {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      background-color: rgba($color: #1C1C1C, $alpha: 0.8);
+      gap: util.px_to_vw(40);
+      transition: all 0.5s ease;
+
+      &.hide {
+         transform: translateY(util.px_to_vw(-450));  
+      }
+      
+      &.active {
+         transform: translateY(0);  
+      }
+      .icon-container {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         width: util.px_to_vw(100);
+         height: util.px_to_vw(100);
+         border: 2px solid #fff;
+         border-radius: 50px;
+
+
+         .add-icon {
+            width: util.px_to_vw(110);
+            height: util.px_to_vw(110);
+            filter: invert(99%) sepia(0%) saturate(1675%) hue-rotate(318deg) brightness(107%) contrast(99%);  
+         }
+      }
+
+      p {
+         color: #fff;
+         font-size: util.px_to_vw(35);
+         @include fonts.family-Helvetica-Now-Text-Regular;
+      }
+      
+   }
+}

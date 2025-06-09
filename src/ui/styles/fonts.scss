@@ -1,0 +1,38 @@
+@font-face {
+   font-family: 'Helvetica Now Text ExtraLight';
+   src: url('/fonts/HelveticaNowText-ExtraLight.ttf');
+}
+@mixin family-Helvetica-Now-Text-ExtraLight{
+   font-family: 'Helvetica Now Text ExtraLight',
+}
+
+@font-face {
+   font-family: 'Helvetica Now Text Bold';
+   src: url('/fonts/HelveticaNowText-Bold.ttf');
+}
+@mixin family-Helvetica-Now-Text-Bold{
+   font-family: 'Helvetica Now Text Bold',
+}
+
+@font-face {
+   font-family: 'Helvetica Now Text Light';
+   src: url('/fonts/HelveticaNowText-Light.ttf');
+}
+@mixin family-Helvetica-Now-Text-Light{
+   font-family: 'Helvetica Now Text Light',
+}
+@font-face {
+   font-family: 'Helvetica Now Text Medium';
+   src: url('/fonts/HelveticaNowText-Medium.ttf');
+}
+@mixin family-Helvetica-Now-Text-Medium{
+   font-family: 'Helvetica Now Text Medium',
+}
+
+@font-face {
+   font-family: 'Helvetica Now Text Regular';
+   src: url('/fonts/HelveticaNowText-Regular.ttf');
+}
+@mixin family-Helvetica-Now-Text-Regular{
+   font-family: 'Helvetica Now Text Regular',
+}

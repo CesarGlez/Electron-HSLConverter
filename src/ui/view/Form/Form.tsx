@@ -1,65 +1,88 @@
-import React, { useEffect, useState } from 'react';
+import { upload_file } from '../../image-collection/imageCollection';
+import { ActionButton } from '../Components/ActionButton/ActionButton';
+import { DragDrop } from '../Components/DragDrop/DragDrop';
+import { useM3u8Converter } from '../hooks/useM3u8Converter';
+import './form_styles_.scss';
 
 export const FormConverter = () => {
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [conversionLogs, setConversionLogs] = useState<string[]>([]);
-    const [isConverting, setIsConverting] = useState(false);
 
-    useEffect(() => {
-        const listener = (_event: any, fileName: string) => {
-            setConversionLogs((logs) => [...logs, fileName]);
-        };
+   const {
+      selectedFile,
+      isConverting,
+      conversionLogs,
+      readyToConvert,
+      readyToDownload,
+      
+      handleConvert,
+      handleFileChange,
+      openSelectionFile
+   } = useM3u8Converter();
 
-        window.hlsEvents.onProgress(listener);
+   return (
+      <div className='main-container'>
+         <div className='drop-container'>
+            <DragDrop openFileExplorer={ openSelectionFile } handleChangeFile={ handleFileChange }/>
+         </div>
+         
+         <div className='process-container'>
+            <div className='file-info-container'>
+               
+               <div className='info-row'>
+                  <p className='info-file label'>Video cargado:</p>
+                  <p className='info-file uploaded'>
+                     { selectedFile ? selectedFile.name : ''}
+                  </p>
+               </div>
 
-        return () => {
-            window.hlsEvents.offProgress(listener);
-        };
-    }, []);
+               <div className='info-row'>
+                  <p className='info-file label'>Tamaño de archivo:</p>
+                  <p className='info-file uploaded'>
+                     {selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB` : ''}
+                  </p>
+               </div>
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] ?? null;
-        setSelectedFile(file);
-        setConversionLogs([]);
-    };
+               <div className='start-btn-container'>
+                  <ActionButton
+                     label='Comenzar conversión'
+                     enable={ readyToConvert }
+                     onClick={() => {}}
+                  />
+               </div>
+            </div>
+            
+            <div className='divine-container'>
+               <div className='line-divine'/>
+            </div>
 
-    const handleConvert = async () => {
-        if (!selectedFile) {
-            alert('Selecciona un archivo primero');
-            return;
-        }
-        setIsConverting(true);
+            <div className='process-convert-container'>
+               <div className='file-converted-container'>
+                  <p className='file-converted-label'>lorem_ipsum_dolor_sit.mp4 coverted to lorem_ipsum_dolor_sit104.ts in 7.240567 sec.</p>
+               </div>
 
-        const buffer = await selectedFile.arrayBuffer();
-        const uint8Buffer = new Uint8Array(buffer);
+               <div className='progress-bar-container'>
+                  <div className='progress-bar'>
+                     <div className='bar'>
+                        {
+                           Array.from({ length: 20 }).map((_, index) => (
+                              <div key={index} className='bar-element'></div>
+                           ))
+                        }
+                     </div>
+                     <p className='percent-label'>35%</p>
+                  </div>
+               </div>
+               
+               <div className='btn-container'>
+                  <ActionButton
+                     label='Descargar conversión'
+                     enable={ readyToDownload }
+                     onClick={() => {}}
+                  />
+               </div>
+            </div>
+         </div>
 
-        try {
-            const result = await window.electronAPI.convertToHLS(uint8Buffer, selectedFile.name);
-
-            if (result.success && result.outputPath) {
-
-                const savePath = await window.electronAPI.seleccionarCarpeta();
-                if (savePath) {
-
-                    await window.hlsEvents.moverArchivos(result.outputPath, savePath);
-
-                    alert('Conversión completada y archivos guardados.');
-                } else {
-                    alert('Guardado cancelado.');
-                }
-            } else {
-                alert(`Error: ${result.message || 'Error desconocido'}`);
-            }
-        } catch (error: any) {
-            alert(`Error: ${error.message}`);
-        } finally {
-            setIsConverting(false);
-        }
-    };
-
-    return (
-        <div className='main-container'>
-            <input type="file" accept="video/mp4" onChange={handleFileChange} />
+         {/* <input type="file" accept="video/mp4" onChange={handleFileChange} />
             <button disabled={!selectedFile || isConverting} onClick={handleConvert}>
                 {isConverting ? 'Convirtiendo...' : 'Convertir a HLS'}
             </button>
@@ -71,7 +94,7 @@ export const FormConverter = () => {
                         <li key={idx}>{log}</li>
                     ))}
                 </ul>
-            </div>
-        </div>
-    );
+            </div> */}
+      </div>
+   );
 };

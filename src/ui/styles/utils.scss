@@ -1,0 +1,10 @@
+$screenToXD_web : 1920;
+$screenToXD_mobile : 393;
+
+@function px_to_vw($px, $type: 1) {
+   @if $type == 1 {
+       @return (calc($px / $screenToXD_web) * 100) + vw ;
+   } @else {
+       @return (calc($px / $screenToXD_mobile) * 100) + vw;
+   } 
+}

@@ -1,0 +1,38 @@
+@use "/src/ui/styles/utils.scss" as util;
+@use "/src/ui/styles/fonts.scss" as fonts;
+
+.btn-start-convert {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: util.px_to_vw(500);
+   height: util.px_to_vw(80);
+   border-radius: 10px;
+   
+   &.btn-enable {
+      border: 1px solid #A1FF7D;
+      transition: all 0.5s ease;
+      cursor: pointer;
+
+      &:hover {
+         transform: scale(1.1);
+      }
+
+      .btn-convert-label {
+         color: #A1FF7D;
+         font-size: util.px_to_vw(32);
+         @include fonts.family-Helvetica-Now-Text-Bold;
+      }
+   }
+   
+   &.btn-disable {
+      border: 1px solid rgba(161, 255, 125, 0.4);
+      transition: all 0.5s ease;
+
+      .btn-convert-label {
+         color: rgba(161, 255, 125, 0.4);
+         font-size: util.px_to_vw(32);
+         @include fonts.family-Helvetica-Now-Text-Bold;
+      }
+   }
+}
