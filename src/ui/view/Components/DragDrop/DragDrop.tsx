@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
 import { add_icon, upload_file } from '../../../image-collection/imageCollection';
-import './drag_drop_styles.scss';
 import { useDragDrop } from './hooks/useDragDrop';
+import './drag_drop_styles.scss';
 
 interface Props {
    handleChangeFile: (e: React.ChangeEvent<HTMLInputElement>) => void;

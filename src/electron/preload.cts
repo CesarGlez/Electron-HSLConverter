@@ -1,28 +1,25 @@
-// const electron = require('electron');
-
-// electron.contextBridge.exposeInMainWorld("electron", {
-//     subscibreStattistcs: (callback: (stattiscs: any) => void) => callback({}),
-//     getStaticData: () => console.log('static')
-// })
-
 import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  convertToHLS: (fileBuffer: Uint8Array, fileName: string) =>
-    ipcRenderer.invoke('convert-to-hls-buffer', fileBuffer, fileName),
+  seleccionarVideo: () => ipcRenderer.invoke('select-video-file'),
+  
+  convertToHLS: (filePath: string, fileName: string) => ipcRenderer.invoke('convert-to-hls-path', filePath, fileName),
 
-  seleccionarCarpeta: () =>
-    ipcRenderer.invoke('seleccionar-carpeta'),
+  seleccionarCarpeta: () => ipcRenderer.invoke('seleccionar-carpeta'),
 });
+
+let progressCallback: ((event: Electron.IpcRendererEvent, fileName: string) => void) | null = null;
 
 contextBridge.exposeInMainWorld('hlsEvents', {
   onProgress: (callback: (fileName: string) => void) => {
-    ipcRenderer.on('hls-progress', (_event, fileName) => callback(fileName));
+    progressCallback = (_event, fileName) => callback(fileName);
+    ipcRenderer.on('hls-progress', progressCallback);
   },
-  offProgress: (callback: (fileName: string) => void) => {
-    ipcRenderer.removeListener('hls-progress', (_event, fileName) =>
-      callback(fileName)
-    );
+  offProgress: () => {
+    if (progressCallback) {
+      ipcRenderer.removeListener('hls-progress', progressCallback);
+      progressCallback = null;
+    }
   },
   moverArchivos: (origen: string, destino: string) =>
     ipcRenderer.invoke('mover-archivos', origen, destino),

@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-interface HookProps {
-   handleChangeFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
 export const useDragDrop = ( handleChangeFile: (e: React.ChangeEvent<HTMLInputElement>) => void) =>  {
    const dropRef = useRef<HTMLDivElement>(null);
    const dragCounter = useRef(0);
@@ -66,12 +62,10 @@ export const useDragDrop = ( handleChangeFile: (e: React.ChangeEvent<HTMLInputEl
       const cleanup = setupDragAndDropEvents(
          dropZone,
          () => {
-            console.log('🔵 Entró archivo al área de drop');
             setElmentInZone(true);
          },
          (file) => {
             if (file && file.type === 'video/mp4') {
-               // handleChangeFile(...) si quieres
                const fakeEvent = {
                   target: {
                     files: [file],
@@ -80,15 +74,12 @@ export const useDragDrop = ( handleChangeFile: (e: React.ChangeEvent<HTMLInputEl
         
                 handleChangeFile(fakeEvent);
 
-               console.log('se solto');
             } else {
                alert('Solo se permiten archivos .mp4');
             }
             setElmentInZone(false);
-            console.log('salio');
          },
          () => {
-            console.log('salio');
             setElmentInZone(false);
          }
       );

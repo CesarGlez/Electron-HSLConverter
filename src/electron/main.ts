@@ -5,7 +5,7 @@ import os from 'os';
 
 import { getPreloadPath } from './pathResolver.js';
 import { convertToHLS } from './ffmpegService.js';
-import { isDev } from './utils.js';
+import { getPathName, isDev } from './utils.js';
 
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
@@ -22,16 +22,32 @@ app.on("ready", () => {
         mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
     }
 
-    // ✅ Handler para conversión
+
+    ipcMain.handle('select-video-file', async () => {
+        const { canceled, filePaths } = await dialog.showOpenDialog({
+          properties: ['openFile'],
+          filters: [{ name: 'Videos', extensions: ['mp4', 'mov', 'avi', 'mkv'] }],
+        });
+      
+        if (canceled || filePaths.length === 0) {
+          return null;
+        }
+      
+        const filePath = filePaths[0];
+        const stats = fs.statSync(filePath);
+      
+        return {
+            filePath: filePath,
+            fileName: path.basename(filePath),
+            fileSize: stats.size
+        };
+      });
+    
     ipcMain.handle(
-        'convert-to-hls-buffer',
-        async (event, fileBuffer: Uint8Array, fileName: string) => {
+        'convert-to-hls-path',
+        async (_event, filePath: string, fileName: string) => {
             try {
                 const tempDir = path.join(os.tmpdir(), 'electron-hls');
-                if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
-
-                const inputPath = path.join(tempDir, fileName);
-                fs.writeFileSync(inputPath, Buffer.from(fileBuffer));
 
                 const outputDir = path.join(
                     tempDir,
@@ -39,38 +55,19 @@ app.on("ready", () => {
                 );
 
                 const onProgress = (fileGenerated: string) => {
-                    event.sender.send('hls-progress', fileGenerated);
+                    _event.sender.send('hls-progress', fileGenerated);
                 };
 
-                await convertToHLS(inputPath, outputDir, onProgress);
+                await convertToHLS(filePath, outputDir, onProgress);
 
                 return { success: true, outputPath: outputDir };
             } catch (error: any) {
-                console.error('Error al convertir video:', error);
+                console.error('Error al convertir video desde path:', error);
                 return { success: false, message: error.message };
             }
         }
     );
 
-    // ✅ Handler para mover archivos
-    ipcMain.handle('mover-archivos', async (_event, sourceDir: string, destDir: string) => {
-        try {
-            if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
-
-            const files = fs.readdirSync(sourceDir);
-            for (const file of files) {
-                const srcFile = path.join(sourceDir, file);
-                const destFile = path.join(destDir, file);
-                fs.copyFileSync(srcFile, destFile);
-            }
-            return { success: true };
-        } catch (error: any) {
-            console.error('Error moviendo archivos:', error);
-            return { success: false, message: error.message };
-        }
-    });
-
-    // ✅ ✅ NUEVO: Handler para seleccionar carpeta
     ipcMain.handle('seleccionar-carpeta', async () => {
         const result = await dialog.showOpenDialog({
             properties: ['openDirectory'],
@@ -80,6 +77,36 @@ app.on("ready", () => {
             return null;
         }
 
-        return result.filePaths[0]; // solo retorna la primera carpeta seleccionada
+        return result.filePaths[0];
+    });
+
+    ipcMain.handle('mover-archivos', async (_event, sourceDir: string, destDir: string) => {
+        try {
+
+            if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
+
+            const files = fs.readdirSync(sourceDir);
+
+            const path_name_file = getPathName(sourceDir).replace('-hls', '')
+            const new_folder_name = `M3U8-Content-${path_name_file}`;
+            const targetFolderPath = path.join(destDir, new_folder_name);
+
+            fs.mkdirSync(targetFolderPath, { recursive: true });
+
+            for (const file of files) {
+
+                const srcFile = path.join(sourceDir, file);
+                const destFile = path.join(targetFolderPath, file);
+                fs.copyFileSync(srcFile, destFile);
+            }
+
+            // const parentDir = path.dirname(sourceDir);
+            // fs.rmSync(parentDir, { recursive: true, force: true });
+
+            return { success: true };
+        } catch (error: any) {
+            console.error('Error moviendo archivos:', error);
+            return { success: false, message: error.message };
+        }
     });
 });

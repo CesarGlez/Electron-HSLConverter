@@ -1,17 +1,19 @@
 interface Window {
   electronAPI: {
     convertToHLS: (
-      fileBuffer: Uint8Array,
-      fileName: string,
-      outputDir?: string
+      filePath: string,
+      fileName: string
     ) => Promise<{ success: boolean; outputPath?: string; message?: string }>;
-
+    
     seleccionarCarpeta: () => Promise<string | null>;
+
+    seleccionarVideo: () => Promise<{ filePath: string; fileName: string; fileSize: number } | null>;
   };
 
   hlsEvents: {
-    onProgress: (callback: (_event: any, fileName: string) => void) => void;
-    offProgress: (callback: (_event: any, fileName: string) => void) => void;
+    onProgress: (callback: (fileName: string) => void) => void;
+    offProgress: () => void;
+    
     moverArchivos: (origen: string, destino: string) => Promise<void>;
   };
 }

@@ -8,14 +8,15 @@ export const FormConverter = () => {
 
    const {
       selectedFile,
-      isConverting,
-      conversionLogs,
+      // isConverting,
+      // conversionLogs,
       readyToConvert,
       readyToDownload,
       
       handleConvert,
       handleFileChange,
-      openSelectionFile
+      saveFilesInSystem,
+      openSelectionFile,
    } = useM3u8Converter();
 
    return (
@@ -30,14 +31,14 @@ export const FormConverter = () => {
                <div className='info-row'>
                   <p className='info-file label'>Video cargado:</p>
                   <p className='info-file uploaded'>
-                     { selectedFile ? selectedFile.name : ''}
+                     { selectedFile ? selectedFile.fileName : ''}
                   </p>
                </div>
 
                <div className='info-row'>
                   <p className='info-file label'>Tamaño de archivo:</p>
                   <p className='info-file uploaded'>
-                     {selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB` : ''}
+                     {selectedFile ? `${(selectedFile.fileSize / (1024 * 1024)).toFixed(2)} MB` : ''}
                   </p>
                </div>
 
@@ -45,7 +46,7 @@ export const FormConverter = () => {
                   <ActionButton
                      label='Comenzar conversión'
                      enable={ readyToConvert }
-                     onClick={() => {}}
+                     onClick={ handleConvert }
                   />
                </div>
             </div>
@@ -76,25 +77,26 @@ export const FormConverter = () => {
                   <ActionButton
                      label='Descargar conversión'
                      enable={ readyToDownload }
-                     onClick={() => {}}
+                     onClick={ saveFilesInSystem }
                   />
                </div>
             </div>
          </div>
 
-         {/* <input type="file" accept="video/mp4" onChange={handleFileChange} />
-            <button disabled={!selectedFile || isConverting} onClick={handleConvert}>
-                {isConverting ? 'Convirtiendo...' : 'Convertir a HLS'}
-            </button>
-
-            <div>
-                <h3>Archivos generados:</h3>
-                <ul>
-                    {conversionLogs.map((log, idx) => (
-                        <li key={idx}>{log}</li>
-                    ))}
-                </ul>
-            </div> */}
       </div>
    );
 };
+
+{/* <input type="file" accept="video/mp4" onChange={handleFileChange} />
+   <button disabled={!selectedFile || isConverting} onClick={handleConvert}>
+       {isConverting ? 'Convirtiendo...' : 'Convertir a HLS'}
+   </button>
+
+   <div>
+       <h3>Archivos generados:</h3>
+       <ul>
+           {conversionLogs.map((log, idx) => (
+               <li key={idx}>{log}</li>
+           ))}
+       </ul>
+   </div> */}

@@ -2,6 +2,7 @@ import * as ffmpegStatic from 'ffmpeg-static';
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
+import { getPathName } from './utils.js';
 
 const ffmpegPath = ffmpegStatic.default as unknown as string;
 
@@ -11,9 +12,14 @@ export const convertToHLS = (
   onProgress?: (fileName: string) => void
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
+    console.log('Ruta de entrada:', inputPath);
+    console.log('Existe inputPath?', fs.existsSync(inputPath));
+
     if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
-    const outputFile = path.join(outputDir, 'index.m3u8');
+    const fileName = getPathName(inputPath);
+
+    const outputFile = path.join(outputDir, `${fileName}.m3u8`);
 
     const args = [
       '-i', inputPath,
@@ -36,6 +42,7 @@ export const convertToHLS = (
       console.error(`[ffmpeg stderr]: ${text}`);
 
       const match = text.match(/Opening '(.+?\.ts)' for writing/);
+      
       if (match && onProgress) {
         onProgress(match[1]);
       }
@@ -43,7 +50,7 @@ export const convertToHLS = (
 
     ffmpeg.on('close', (code) => {
       if (code === 0) {
-        if (onProgress) onProgress('index.m3u8');
+        if (onProgress) onProgress(`${fileName}.m3u8`);
         resolve();
       } else {
         reject(new Error(`ffmpeg exited with code ${code}`));
