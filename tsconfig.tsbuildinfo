@@ -1,1 +1,1 @@
-{"root":["./src/ui/app.tsx","./src/ui/main.tsx","./src/ui/vite-env.d.ts"],"version":"5.8.3"}
+{"root":["./src/ui/app.tsx","./src/ui/main.tsx","./src/ui/vite-env.d.ts","./src/ui/image-collection/imagecollection.tsx","./src/ui/routes/approuter.tsx","./src/ui/view/components/actionbutton/actionbutton.tsx","./src/ui/view/components/dragdrop/dragdrop.tsx","./src/ui/view/components/dragdrop/hooks/usedragdrop.tsx","./src/ui/view/form/form.tsx","./src/ui/view/hooks/usem3u8converter.tsx"],"version":"5.8.3"}

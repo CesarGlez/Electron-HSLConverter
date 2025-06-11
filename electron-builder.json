@@ -3,8 +3,11 @@
     "asarUnpack": [
         "node_modules/ffmpeg-static"
     ],
-    "files": ["dist-electron", "dist-react"],
-    "icon": "./hsl-converter-icon.png",
+    "files": [
+        "dist-electron/**/*",
+        "dist-react/**/*"
+    ],
+    "icon": "./hsl-converter-icon-mac.png",
     "mac": {
         "target": "dmg"
     },
