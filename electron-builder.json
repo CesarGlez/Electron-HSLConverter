@@ -1,18 +1,23 @@
 {
     "appId": "com.cesar.hsl-converter",
     "asarUnpack": [
-        "node_modules/ffmpeg-static"
+        "**/ffmpeg-static/**"
     ],
-    "files": ["dist-electron", "dist-react"],
-    "icon": "./hsl-converter-icon.png",
+    "files": [
+        "dist-electron/**/*",
+        "dist-react/**/*",
+        "node_modules/ffmpeg-static/**/*"
+    ],
     "mac": {
-        "target": "dmg"
+        "target": "dmg",
+        "icon": "./hsl-converter-icon-mac.png"
     },
     "linux": {
         "target": "AppImage",
         "category": "Utility"
     },
     "win": {
-        "target": ["portable", "msi"]
+        "target": ["portable", "msi"],
+        "icon": "./hsl-converter-icon.png"
     }
 }

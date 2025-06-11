@@ -1,19 +1,40 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import ffmpegPath from 'ffmpeg-static';
+
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
 
+
 import { getPreloadPath } from './pathResolver.js';
-import { convertToHLS } from './ffmpegService.js';
+import { convertToHLSDev } from './ffmpegServiceDev.js';
 import { getPathName, isDev } from './utils.js';
+import { convertToHLSProd } from './ffmpegServiceProd.js';
 
 app.on("ready", () => {
+
+    try {
+        if (!fs.existsSync(ffmpegPath.toString())) {
+            console.error("FFmpeg binary does not exist at path:", ffmpegPath);
+        } else {
+            console.log("FFmpeg binary found at:", ffmpegPath);
+            try {
+                fs.chmodSync(ffmpegPath.toString(), 0o755);
+                console.log("chmod +x applied successfully");
+            } catch (chmodError) {
+                console.error("Error applying chmod +x:", chmodError);
+            }
+        }
+    } catch (fsError) {
+        console.error("Error verifying FFmpeg binary:", fsError);
+    }
+
     const mainWindow = new BrowserWindow({
         webPreferences: {
             preload: getPreloadPath(),
-            contextIsolation: true,
             nodeIntegration: false,
-            webSecurity: false,
+            contextIsolation: true,
+            webSecurity: true,
             sandbox: false,
         },
     });
@@ -44,45 +65,36 @@ app.on("ready", () => {
         };
     });
 
-    ipcMain.handle('drop-file', async (_event, filePath: string) => {
-        try {
-            const stats = fs.statSync(filePath);
+    ipcMain.handle('drop-file', async (event, filePath) => {
+        console.log('Archivo recibido en Electron:', filePath);
     
-            return {
-                filePath,
-                fileName: path.basename(filePath),
-                fileSize: stats.size,
+        // Puedes hacer procesamiento del archivo aquí
+        return { filePath, status: 'ok' };
+    });     
+
+    ipcMain.handle( 'convert-to-hls-path', async (_event, filePath: string, fileName: string) => {
+        try {
+            const tempDir = path.join(os.tmpdir(), 'electron-hls');
+
+            const outputDir = path.join(
+                tempDir,
+                path.basename(fileName, path.extname(fileName)) + '-hls'
+            );
+
+            const onProgress = (fileGenerated: string) => {
+                _event.sender.send('hls-progress', fileGenerated);
             };
-        } catch (error:any) {
-            console.error('Error al procesar archivo soltado:', error);
-            return null;
+
+            isDev()
+            ? await convertToHLSDev(filePath, outputDir, onProgress)
+            : await convertToHLSProd(filePath, outputDir, onProgress);
+
+            return { success: true, outputPath: outputDir };
+        } catch (error: any) {
+            console.error('Error al convertir video desde path:', error);
+            return { success: false, message: error.message };
         }
-    });
-
-    ipcMain.handle(
-        'convert-to-hls-path',
-        async (_event, filePath: string, fileName: string) => {
-            try {
-                const tempDir = path.join(os.tmpdir(), 'electron-hls');
-
-                const outputDir = path.join(
-                    tempDir,
-                    path.basename(fileName, path.extname(fileName)) + '-hls'
-                );
-
-                const onProgress = (fileGenerated: string) => {
-                    _event.sender.send('hls-progress', fileGenerated);
-                };
-
-                await convertToHLS(filePath, outputDir, onProgress);
-
-                return { success: true, outputPath: outputDir };
-            } catch (error: any) {
-                console.error('Error al convertir video desde path:', error);
-                return { success: false, message: error.message };
-            }
-        }
-    );
+     });
 
     ipcMain.handle('select-folder-to-save', async () => {
         const result = await dialog.showOpenDialog({
