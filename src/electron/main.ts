@@ -13,6 +13,8 @@ app.on("ready", () => {
             preload: getPreloadPath(),
             contextIsolation: true,
             nodeIntegration: false,
+            webSecurity: false,
+            sandbox: false,
         },
     });
 
@@ -22,27 +24,41 @@ app.on("ready", () => {
         mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
     }
 
-
     ipcMain.handle('select-video-file', async () => {
         const { canceled, filePaths } = await dialog.showOpenDialog({
-          properties: ['openFile'],
-          filters: [{ name: 'Videos', extensions: ['mp4', 'mov', 'avi', 'mkv'] }],
+            properties: ['openFile'],
+            filters: [{ name: 'Videos', extensions: ['mp4', 'mov', 'avi', 'mkv'] }],
         });
-      
+
         if (canceled || filePaths.length === 0) {
-          return null;
+            return null;
         }
-      
+
         const filePath = filePaths[0];
         const stats = fs.statSync(filePath);
-      
+
         return {
             filePath: filePath,
             fileName: path.basename(filePath),
             fileSize: stats.size
         };
-      });
+    });
+
+    ipcMain.handle('drop-file', async (_event, filePath: string) => {
+        try {
+            const stats = fs.statSync(filePath);
     
+            return {
+                filePath,
+                fileName: path.basename(filePath),
+                fileSize: stats.size,
+            };
+        } catch (error:any) {
+            console.error('Error al procesar archivo soltado:', error);
+            return null;
+        }
+    });
+
     ipcMain.handle(
         'convert-to-hls-path',
         async (_event, filePath: string, fileName: string) => {
@@ -68,7 +84,7 @@ app.on("ready", () => {
         }
     );
 
-    ipcMain.handle('seleccionar-carpeta', async () => {
+    ipcMain.handle('select-folder-to-save', async () => {
         const result = await dialog.showOpenDialog({
             properties: ['openDirectory'],
         });
@@ -80,14 +96,14 @@ app.on("ready", () => {
         return result.filePaths[0];
     });
 
-    ipcMain.handle('mover-archivos', async (_event, sourceDir: string, destDir: string) => {
+    ipcMain.handle('copy-files', async (_event, sourceDir: string, destDir: string) => {
         try {
 
             if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
 
             const files = fs.readdirSync(sourceDir);
 
-            const path_name_file = getPathName(sourceDir).replace('-hls', '')
+            const path_name_file = getPathName(sourceDir).name.replace('-hls', '');
             const new_folder_name = `M3U8-Content-${path_name_file}`;
             const targetFolderPath = path.join(destDir, new_folder_name);
 
@@ -99,9 +115,6 @@ app.on("ready", () => {
                 const destFile = path.join(targetFolderPath, file);
                 fs.copyFileSync(srcFile, destFile);
             }
-
-            // const parentDir = path.dirname(sourceDir);
-            // fs.rmSync(parentDir, { recursive: true, force: true });
 
             return { success: true };
         } catch (error: any) {

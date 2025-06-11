@@ -8,11 +8,11 @@ export const FormConverter = () => {
 
    const {
       selectedFile,
-      // isConverting,
-      // conversionLogs,
       readyToConvert,
       readyToDownload,
+      fileConvertedMessage, 
       
+      dropFile,
       handleConvert,
       handleFileChange,
       saveFilesInSystem,
@@ -27,19 +27,20 @@ export const FormConverter = () => {
          
          <div className='process-container'>
             <div className='file-info-container'>
-               
-               <div className='info-row'>
-                  <p className='info-file label'>Video cargado:</p>
-                  <p className='info-file uploaded'>
-                     { selectedFile ? selectedFile.fileName : ''}
-                  </p>
-               </div>
+               <div className='description'>
+                  <div className='info-row'>
+                     <p className='info-file label'>Video cargado:</p>
+                     <p className='info-file uploaded'>
+                        { selectedFile ? selectedFile.fileName : ''}
+                     </p>
+                  </div>
 
-               <div className='info-row'>
-                  <p className='info-file label'>Tamaño de archivo:</p>
-                  <p className='info-file uploaded'>
-                     {selectedFile ? `${(selectedFile.fileSize / (1024 * 1024)).toFixed(2)} MB` : ''}
-                  </p>
+                  <div className='info-row'>
+                     <p className='info-file label'>Tamaño de archivo:</p>
+                     <p className='info-file uploaded'>
+                        {selectedFile ? `${(selectedFile.fileSize / (1024 * 1024)).toFixed(2)} MB` : ''}
+                     </p>
+                  </div>
                </div>
 
                <div className='start-btn-container'>
@@ -56,20 +57,23 @@ export const FormConverter = () => {
             </div>
 
             <div className='process-convert-container'>
-               <div className='file-converted-container'>
-                  <p className='file-converted-label'>lorem_ipsum_dolor_sit.mp4 coverted to lorem_ipsum_dolor_sit104.ts in 7.240567 sec.</p>
-               </div>
 
-               <div className='progress-bar-container'>
-                  <div className='progress-bar'>
-                     <div className='bar'>
-                        {
-                           Array.from({ length: 20 }).map((_, index) => (
-                              <div key={index} className='bar-element'></div>
-                           ))
-                        }
+               <div className='convert-desc'>
+                  <div className='file-converted-container'>
+                     <p className='file-converted-label'>{ fileConvertedMessage }</p>
+                  </div>
+
+                  <div className='progress-bar-container'>
+                     <div className='progress-bar'>
+                        <div className='bar'>
+                           {
+                              Array.from({ length: 20 }).map((_, index) => (
+                                 <div key={index} className='bar-element'></div>
+                              ))
+                           }
+                        </div>
+                        <p className='percent-label'>35%</p>
                      </div>
-                     <p className='percent-label'>35%</p>
                   </div>
                </div>
                
@@ -82,21 +86,6 @@ export const FormConverter = () => {
                </div>
             </div>
          </div>
-
       </div>
    );
 };
-
-{/* <input type="file" accept="video/mp4" onChange={handleFileChange} />
-   <button disabled={!selectedFile || isConverting} onClick={handleConvert}>
-       {isConverting ? 'Convirtiendo...' : 'Convertir a HLS'}
-   </button>
-
-   <div>
-       <h3>Archivos generados:</h3>
-       <ul>
-           {conversionLogs.map((log, idx) => (
-               <li key={idx}>{log}</li>
-           ))}
-       </ul>
-   </div> */}

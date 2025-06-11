@@ -1,26 +1,34 @@
 import path from 'path';
 
 export function isDev(): boolean {
-    return process.env.NODE_ENV === 'development';
+  return process.env.NODE_ENV === 'development';
 }
 
-export function getPathName(inputPath: string): string {
+export function getPathName(inputPath: string): {name: string; format: string} {
 
-    let fileName = path.basename(inputPath, '.mp4');
+  
+  const file= path.basename(inputPath);
+  const file_slice = file.split('.');
 
-    function cleanFileName(name: string) {
-      let cleaned = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  let fileName = file_slice[0];
+  const fileExtension = file_slice[1];
 
-      cleaned = cleaned.replace(/ñ/g, 'n').replace(/Ñ/g, 'N');
+  function cleanFileName(name: string) {
+    let cleaned = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-      cleaned = cleaned.replace(/\s+/g, '_');
+    cleaned = cleaned.replace(/ñ/g, 'n').replace(/Ñ/g, 'N');
 
-      cleaned = cleaned.replace(/[^a-zA-Z0-9_-]/g, '');
+    cleaned = cleaned.replace(/\s+/g, '_');
 
-      return cleaned;
-    }
+    cleaned = cleaned.replace(/[^a-zA-Z0-9_-]/g, '');
 
-    fileName = cleanFileName(fileName);
-    
-    return fileName;
+    return cleaned;
+  }
+
+  fileName = cleanFileName(fileName);
+
+  return {
+    name: fileName,
+    format: fileExtension 
+  };
 }

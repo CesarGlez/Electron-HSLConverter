@@ -3,8 +3,10 @@ import { useEffect, useState } from 'react';
 export const useM3u8Converter = () => {
    const [selectedFile, setSelectedFile] = useState<{ filePath: string; fileName: string; fileSize: number } | null>(null);
    const [conversionLogs, setConversionLogs] = useState<string[]>([]);
+   
    const [isConverting, setIsConverting] = useState(false);
    const [filesConverted, setFileConverted] = useState('');
+   const [fileConvertedMessage, setFileConvertedMessage] = useState('');
    
    const [readyToConvert, setReadyToConvert] = useState(false);
    const [readyToDownload, setReadyToDownload] = useState(false);
@@ -19,35 +21,48 @@ export const useM3u8Converter = () => {
       return () => {
         window.hlsEvents.offProgress();
       };
-    }, []);
-    
+      
+   }, []);
 
+   useEffect(() => {
+      window.electronAPI.onHLSProgress((fileName: string) => {
+        setFileConvertedMessage(fileName);
+      });
+   }, []);
+    
+    
    const openSelectionFile = () => {
       const input_file = document.getElementsByName('upload-file')[0];
+      
       input_file.click()
    }
 
-
    const handleFileChange = async () => {
-      const result = await window.electronAPI.seleccionarVideo();
+      const result = await window.electronAPI.selectVideo();
+
+      console.log(result);
     
-      if (result) {
-         const { filePath } = result;
-         
+      if ( result ) {
          setReadyToConvert(true);
          setSelectedFile(result);
          setConversionLogs([]);
-         
-         
-      } else {
-        console.log('Selección cancelada');
-      }
+      } 
+   };
+
+   const dropFile = async () => {
+
+      // if ( result ) {
+      //    setReadyToConvert(true);
+      //    setSelectedFile(result);
+      //    setConversionLogs([]);
+      // } 
    };
 
    const handleConvert = async () => {
       if (!selectedFile) return;
-    
+      
       setIsConverting(true);
+      console.log('object');
     
       try {
          
@@ -58,8 +73,10 @@ export const useM3u8Converter = () => {
         const result = await window.electronAPI.convertToHLS(filePath, fileName);
     
         if (result.success && result.outputPath) {
+
           setFileConverted(result.outputPath);
           setReadyToDownload(true);
+          
         } else {
           alert(`Error: ${result.message || 'Error desconocido'}`);
         }
@@ -70,12 +87,11 @@ export const useM3u8Converter = () => {
       }
    };
     
-
    const saveFilesInSystem = async () => {
-      const savePath = await window.electronAPI.seleccionarCarpeta();
+      const savePath = await window.electronAPI.selectFolder();
       if (savePath) {
 
-         await window.hlsEvents.moverArchivos(filesConverted, savePath);
+         await window.hlsEvents.copyFiles(filesConverted, savePath);
 
          alert('Conversión completada y archivos guardados.');
 
@@ -90,7 +106,9 @@ export const useM3u8Converter = () => {
       isConverting,
       readyToConvert,
       readyToDownload,
+      fileConvertedMessage,
       
+      dropFile,
       handleConvert,
       handleFileChange,
       saveFilesInSystem,

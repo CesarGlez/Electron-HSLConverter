@@ -12,14 +12,11 @@ export const convertToHLS = (
   onProgress?: (fileName: string) => void
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
-    console.log('Ruta de entrada:', inputPath);
-    console.log('Existe inputPath?', fs.existsSync(inputPath));
-
     if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
-    const fileName = getPathName(inputPath);
+    const { name, format } = getPathName(inputPath);
 
-    const outputFile = path.join(outputDir, `${fileName}.m3u8`);
+    const outputFile = path.join(outputDir, `${name}.m3u8`);
 
     const args = [
       '-i', inputPath,
@@ -33,24 +30,26 @@ export const convertToHLS = (
 
     const ffmpeg = spawn(ffmpegPath, args);
 
-    ffmpeg.stdout.on('data', (data) => {
-      console.log(`[ffmpeg stdout]: ${data}`);
-    });
+    ffmpeg.stdout.on('data', (__) => {});
 
     ffmpeg.stderr.on('data', (data) => {
-      const text = data.toString();
-      console.error(`[ffmpeg stderr]: ${text}`);
-
-      const match = text.match(/Opening '(.+?\.ts)' for writing/);
       
-      if (match && onProgress) {
-        onProgress(match[1]);
+      const text = data.toString();
+      
+      const fileConverted = text.split('/').pop();
+      
+      // const match = text.match(/Opening '(.+?\.ts)' for writing/);
+
+      const outputLog = `Original file transform to ${fileConverted}`
+      
+      if (outputLog && onProgress) {
+        onProgress(outputLog);
       }
     });
 
     ffmpeg.on('close', (code) => {
       if (code === 0) {
-        if (onProgress) onProgress(`${fileName}.m3u8`);
+        if (onProgress) onProgress(`${name} file successfully converted!`);
         resolve();
       } else {
         reject(new Error(`ffmpeg exited with code ${code}`));

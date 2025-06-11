@@ -12,21 +12,14 @@ export const DragDrop = ({ handleChangeFile, openFileExplorer }: Props) => {
    const { dropRef, elmentInZone } = useDragDrop(handleChangeFile);
 
    return (
-
-      <div
-         className="drop-zone"
-         ref={dropRef}
-      >
-         <img
-            className='upload-icon'
-            src={upload_file.url}
-            alt={upload_file.alt}
-         />
+      <div className="drop-zone" ref={dropRef}>
+         <img className='upload-icon' src={upload_file.url} alt={upload_file.alt}/>
+         
          <p>Arrastra tu video aquí</p>
 
          <p>o</p>
 
-         <div className='btn-upload' onClick={openFileExplorer}>
+         <div className='btn-upload' onClick={ openFileExplorer }>
             <p>Selecciona el archivo</p>
          </div>
 

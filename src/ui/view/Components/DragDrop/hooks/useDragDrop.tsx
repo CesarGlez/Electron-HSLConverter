@@ -53,39 +53,41 @@ export const useDragDrop = ( handleChangeFile: (e: React.ChangeEvent<HTMLInputEl
       };
    }
    
-   useEffect(() => {
-      const dropZone = dropRef.current;
+   // useEffect(() => {
+   //    const dropZone = dropRef.current;
 
-      if (!dropZone) return;
+   //    if (!dropZone) return;
 
 
-      const cleanup = setupDragAndDropEvents(
-         dropZone,
-         () => {
-            setElmentInZone(true);
-         },
-         (file) => {
-            if (file && file.type === 'video/mp4') {
-               const fakeEvent = {
-                  target: {
-                    files: [file],
-                  },
-                } as unknown as React.ChangeEvent<HTMLInputElement>;
+   //    const cleanup = setupDragAndDropEvents(
+   //       dropZone,
+   //       () => {
+   //          setElmentInZone(true);
+   //       },
+   //       (file) => {
+   //          if (file && file.type === 'video/mp4') {
+   //             const fakeEvent = {
+   //                target: {
+   //                  files: [file],
+   //                },
+   //              } as unknown as React.ChangeEvent<HTMLInputElement>;
         
-                handleChangeFile(fakeEvent);
+   //              handleChangeFile(fakeEvent);
 
-            } else {
-               alert('Solo se permiten archivos .mp4');
-            }
-            setElmentInZone(false);
-         },
-         () => {
-            setElmentInZone(false);
-         }
-      );
+   //          } else {
+   //             alert('Solo se permiten archivos .mp4');
+   //          }
+   //          setElmentInZone(false);
+   //       },
+   //       () => {
+   //          setElmentInZone(false);
+   //       }
+   //    );
 
-      return cleanup;
-   }, [handleChangeFile]);
+   //    return cleanup;
+   // }, []);
+
+   // }, [handleChangeFile]);
 
 
    return { dropRef, dragCounter, elmentInZone };
