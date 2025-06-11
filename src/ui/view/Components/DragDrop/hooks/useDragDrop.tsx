@@ -45,10 +45,7 @@ export const useDragDrop = () => {
         return;
       }
     
-      const file = files[0] as File & { path?: string };
-    
-      console.log('Archivo:', file);
-      console.log('Propiedades:', Object.getOwnPropertyNames(file));
+      const file = files[0] as File & { path?: string };      
     
       if (!file.path) {
         alert('No se puede obtener la ruta del archivo. ¿Estás arrastrando desde el explorador?');

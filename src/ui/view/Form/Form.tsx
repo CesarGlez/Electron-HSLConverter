@@ -61,7 +61,7 @@ export const FormConverter = () => {
                      <p className='file-converted-label'>{ fileConvertedMessage }</p>
                   </div>
 
-                  <div className='progress-bar-container'>
+                  {/* <div className='progress-bar-container'>
                      <div className='progress-bar'>
                         <div className='bar'>
                            {
@@ -72,7 +72,7 @@ export const FormConverter = () => {
                         </div>
                         <p className='percent-label'>35%</p>
                      </div>
-                  </div>
+                  </div> */}
                </div>
                
                <div className='btn-container'>
