@@ -49,8 +49,9 @@ export const useM3u8Converter = () => {
       } 
    };
 
-   const dropFile = async () => {
-
+   const dropFile = async (file: React.ChangeEvent<HTMLInputElement>) => {
+      // const result = await window.electronAPI.dropFile('');
+      console.log(file);
       // if ( result ) {
       //    setReadyToConvert(true);
       //    setSelectedFile(result);

@@ -1,4 +1,3 @@
-import { upload_file } from '../../image-collection/imageCollection';
 import { ActionButton } from '../Components/ActionButton/ActionButton';
 import { DragDrop } from '../Components/DragDrop/DragDrop';
 import { useM3u8Converter } from '../hooks/useM3u8Converter';
@@ -16,13 +15,13 @@ export const FormConverter = () => {
       handleConvert,
       handleFileChange,
       saveFilesInSystem,
-      openSelectionFile,
+      
    } = useM3u8Converter();
 
    return (
       <div className='main-container'>
          <div className='drop-container'>
-            <DragDrop openFileExplorer={ openSelectionFile } handleChangeFile={ handleFileChange }/>
+            <DragDrop openFileExplorer={ handleFileChange }/>
          </div>
          
          <div className='process-container'>
@@ -57,7 +56,6 @@ export const FormConverter = () => {
             </div>
 
             <div className='process-convert-container'>
-
                <div className='convert-desc'>
                   <div className='file-converted-container'>
                      <p className='file-converted-label'>{ fileConvertedMessage }</p>

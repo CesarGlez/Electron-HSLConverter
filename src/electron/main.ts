@@ -11,8 +11,8 @@ app.on("ready", () => {
     const mainWindow = new BrowserWindow({
         webPreferences: {
             preload: getPreloadPath(),
-            contextIsolation: true,
             nodeIntegration: false,
+            contextIsolation: true,
             webSecurity: false,
             sandbox: false,
         },
@@ -44,20 +44,28 @@ app.on("ready", () => {
         };
     });
 
-    ipcMain.handle('drop-file', async (_event, filePath: string) => {
-        try {
-            const stats = fs.statSync(filePath);
+    // ipcMain.handle('drop-file', async (_event, filePath: string) => {
+    //     try {
+    //         const stats = fs.statSync(filePath);
     
-            return {
-                filePath,
-                fileName: path.basename(filePath),
-                fileSize: stats.size,
-            };
-        } catch (error:any) {
-            console.error('Error al procesar archivo soltado:', error);
-            return null;
-        }
+    //         return {
+    //             filePath,
+    //             fileName: path.basename(filePath),
+    //             fileSize: stats.size,
+    //         };
+    //     } catch (error:any) {
+    //         console.error('Error al procesar archivo soltado:', error);
+    //         return null;
+    //     }
+    // });
+
+    ipcMain.handle('drop-file', async (event, filePath) => {
+        console.log('Archivo recibido en Electron:', filePath);
+    
+        // Puedes hacer procesamiento del archivo aquí
+        return { filePath, status: 'ok' };
     });
+      
 
     ipcMain.handle(
         'convert-to-hls-path',
