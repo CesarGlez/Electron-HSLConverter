@@ -7,8 +7,9 @@ import os from 'os';
 
 
 import { getPreloadPath } from './pathResolver.js';
-import { convertToHLS } from './ffmpegService.js';
+import { convertToHLSDev } from './ffmpegServiceDev.js';
 import { getPathName, isDev } from './utils.js';
+import { convertToHLSProd } from './ffmpegServiceProd.js';
 
 app.on("ready", () => {
 
@@ -84,7 +85,9 @@ app.on("ready", () => {
                 _event.sender.send('hls-progress', fileGenerated);
             };
 
-            await convertToHLS(filePath, outputDir, onProgress);
+            isDev()
+            ? await convertToHLSDev(filePath, outputDir, onProgress)
+            : await convertToHLSProd(filePath, outputDir, onProgress);
 
             return { success: true, outputPath: outputDir };
         } catch (error: any) {
