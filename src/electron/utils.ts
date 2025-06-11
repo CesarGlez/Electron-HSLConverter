@@ -6,7 +6,6 @@ export function isDev(): boolean {
 
 export function getPathName(inputPath: string): {name: string; format: string} {
 
-  
   const file= path.basename(inputPath);
   const file_slice = file.split('.');
 
