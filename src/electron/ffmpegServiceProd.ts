@@ -1,17 +1,12 @@
-
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 
+import { getFfmpegPath } from './ffmpegPath.js';
 
-import { getFfmpegPath } from './ffmpegPath.js'
-
-export const convertToHLS = (
-   inputPath: string,
-   outputDir: string,
-   onProgress?: (fileName: string) => void
+export const convertToHLSProd = async (inputPath: string,outputDir: string,onProgress?: (fileName: string) => void
  ): Promise<void> => {
-   return new Promise((resolve, reject) => {
+   return new Promise(async (resolve, reject) => {
      try {
        const ffmpegPath = getFfmpegPath();
  
@@ -20,7 +15,6 @@ export const convertToHLS = (
        }
  
        const { name } = path.parse(inputPath);
-
        const outputFile = path.join(outputDir, `${name}.m3u8`);
  
        const args = [
