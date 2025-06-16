@@ -1,6 +1,6 @@
+import { app } from 'electron';
 import path from 'path';
 import fs from 'fs';
-import { app } from 'electron';
 
 const isProd = app.isPackaged;
 

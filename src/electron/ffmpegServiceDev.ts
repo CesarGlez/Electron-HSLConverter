@@ -19,13 +19,18 @@ export const convertToHLSDev = (inputPath: string, outputDir: string, onProgress
 
          const args = [
             '-i', inputPath,
-            '-codec', 'copy',
+            '-c:v', 'libx264',
+            '-profile:v', 'high',
+            '-preset', 'fast',
+            '-crf', '20',
+            '-c:a', 'aac',
+            '-b:a', '192k',
             '-start_number', '0',
             '-hls_time', '10',
             '-hls_list_size', '0',
             '-f', 'hls',
             outputFile,
-         ];
+          ];
 
          const ffmpeg = spawn(ffmpegPath, args);
 

@@ -18,14 +18,20 @@ export const convertToHLSProd = async (inputPath: string,outputDir: string,onPro
        const outputFile = path.join(outputDir, `${name}.m3u8`);
  
        const args = [
-         '-i', inputPath,
-         '-codec', 'copy',
-         '-start_number', '0',
-         '-hls_time', '10',
-         '-hls_list_size', '0',
-         '-f', 'hls',
-         outputFile,
-       ];
+        '-i', inputPath,
+        '-c:v', 'libx264',
+        '-profile:v', 'high',
+        '-preset', 'fast',
+        '-crf', '20',
+        '-c:a', 'aac',
+        '-b:a', '192k',
+        '-start_number', '0',
+        '-hls_time', '20',
+        '-hls_list_size', '0',
+        '-f', 'hls',
+        outputFile,
+      ];
+      
  
        const ffmpeg = spawn(ffmpegPath, args);
  
