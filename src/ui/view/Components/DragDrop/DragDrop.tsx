@@ -1,26 +1,32 @@
 import { add_icon, upload_file } from '../../../image-collection/imageCollection';
 import { useDragDrop } from './hooks/useDragDrop';
 import './drag_drop_styles.scss';
+import { useTranslation } from 'react-i18next';
+import { dialog } from 'electron';
 
 interface Props {
-   
+   enable: boolean;
    openFileExplorer: () => void;
 }
 
-export const DragDrop = ({ openFileExplorer }: Props) => {
+export const DragDrop = ({ enable, openFileExplorer }: Props) => {
 
+   const { t } = useTranslation();
+   
    const { dropRef, isOver } = useDragDrop();
 
    return (
       <div className="drop-zone" ref={dropRef}>
-         <img className='upload-icon' src={upload_file.url} alt={upload_file.alt}/>
+         <div className='label-container'>
+            <img className='upload-icon' src={upload_file.url} alt={upload_file.alt}/>
 
-         <p>Arrastra tu video aquí</p>
+            <p>{ t('drop_component.drag_here') }</p>
 
-         <p>o</p>
+            <p>{ t('drop_component.or') }</p>
+         </div>
 
          <div className='btn-upload' onClick={ openFileExplorer }>
-            <p>Selecciona el archivo</p>
+            <p>{ t('drop_component.choose_file') }</p>
          </div>
 
          <div className={`overlay ${ isOver ? 'active' : 'hide' }`}>
@@ -31,8 +37,13 @@ export const DragDrop = ({ openFileExplorer }: Props) => {
                   alt={ add_icon.alt }
                />
             </div>
-            <p>Soltar video aquí</p>
+            <p>{ t('drop_component.drop_here') }</p>
          </div>
+
+         {
+            enable &&
+            <div className='disable-overlay'/>
+         }
       </div>
    );
 }

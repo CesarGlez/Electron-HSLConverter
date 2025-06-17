@@ -6,6 +6,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
    selectFolder: () => ipcRenderer.invoke('select-folder-to-save'),
 
    convertToHLS: (filePath: string, fileName: string) => ipcRenderer.invoke('convert-to-hls-path', filePath, fileName),
+   
+   cancelConversion: () => ipcRenderer.invoke('cancel-conversion'),
 
    onHLSProgress: (callback: (fileName: string) => void) => {
       ipcRenderer.on('hls-progress', (_event, fileName) => {

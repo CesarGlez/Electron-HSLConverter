@@ -7,6 +7,8 @@ interface Window {
 
     onHLSProgress: (callback: (fileName: string) => void) => void;
     
+    cancelConversion: () => void;
+    
     selectFolder: () => Promise<string | null>;
 
     selectVideo: () => Promise<{ filePath: string; fileName: string; fileSize: number } | null>;

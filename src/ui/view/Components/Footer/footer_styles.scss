@@ -1,0 +1,45 @@
+@use "/src/ui/styles/utils.scss" as util;
+@use "/src/ui/styles/fonts.scss" as fonts;
+
+.footer-main-contianer {
+   display: flex;
+   width: 100%;
+   height: util.px_to_vw(60);
+   background-color: #1C1C1C;
+   border-top: 1px solid #333333;
+
+   .footer-content {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+
+      .section-one {
+         display: flex;
+         justify-content: flex-start;
+         align-items: center;
+         width: 80%;
+         padding-left: util.px_to_vw(20);
+
+         .txt-progress-label {
+            color: #fff;
+            font-size: util.px_to_vw(25);
+            @include fonts.family-Helvetica-Now-Text-Bold;
+         }
+      }
+
+      .section-two {
+         display: flex;
+         width: 20%;
+         justify-content: flex-end;
+         align-items: center;
+         
+         padding-right: util.px_to_vw(20);
+
+         .txt-version-label {
+            color: #fff;
+            font-size: util.px_to_vw(25);
+            @include fonts.family-Helvetica-Now-Text-Regular;
+         }
+      }
+   }
+}
