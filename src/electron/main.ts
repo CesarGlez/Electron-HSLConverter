@@ -5,11 +5,9 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 
-
 import { getPreloadPath } from './pathResolver.js';
-import { convertToHLSDev } from './ffmpegServiceDev.js';
 import { getPathName, isDev } from './utils.js';
-import { convertToHLSProd } from './ffmpegServiceProd.js';
+import { ffmpegService } from './ffmpegService.js';
 
 app.on("ready", () => {
 
@@ -30,7 +28,12 @@ app.on("ready", () => {
     }
 
     const mainWindow = new BrowserWindow({
+        width: 770,
+        height: 595,
+        backgroundColor: '#151515',
+        resizable: false,
         webPreferences: {
+
             preload: getPreloadPath(),
             nodeIntegration: false,
             contextIsolation: true,
@@ -67,8 +70,7 @@ app.on("ready", () => {
 
     ipcMain.handle('drop-file', async (event, filePath) => {
         console.log('Archivo recibido en Electron:', filePath);
-    
-        // Puedes hacer procesamiento del archivo aquí
+
         return { filePath, status: 'ok' };
     });     
 
@@ -85,14 +87,25 @@ app.on("ready", () => {
                 _event.sender.send('hls-progress', fileGenerated);
             };
 
-            isDev()
-            ? await convertToHLSDev(filePath, outputDir, onProgress)
-            : await convertToHLSProd(filePath, outputDir, onProgress);
+            const ffmpeg = await ffmpegService.create();
+            
+            await ffmpeg.convertToHLS(filePath, outputDir, onProgress);
 
             return { success: true, outputPath: outputDir };
         } catch (error: any) {
             console.error('Error al convertir video desde path:', error);
             return { success: false, message: error.message };
+        }
+    });
+    ipcMain.handle('cancel-conversion', () => {
+        try {
+           ffmpegService.cancelCurrent();
+           
+           console.log('cancel');
+           return { success: true, message: 'Conversión cancelada' };
+
+        } catch (err: any) {
+           return { success: false, message: err.message };
         }
      });
 

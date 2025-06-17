@@ -1,12 +1,16 @@
 {
     "appId": "com.cesar.hsl-converter",
     "asarUnpack": [
-        "**/ffmpeg-static/**"
+        "**/ffmpeg-static/**",
+        "**/fluent-ffmpeg/**",
+        "**/ffprobe-static/**"
     ],
     "files": [
         "dist-electron/**/*",
         "dist-react/**/*",
-        "node_modules/ffmpeg-static/**/*"
+        "node_modules/ffmpeg-static/**/*",
+        "node_modules/fluent-ffmpeg/**",
+        "node_modules/ffprobe-static/**"
     ],
     "mac": {
         "target": "dmg",

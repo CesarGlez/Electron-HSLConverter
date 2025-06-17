@@ -12,6 +12,6 @@ export function getPreloadPath() {
         ? path.join(app.getAppPath(), 'dist-electron', 'preload.cjs')
         : path.join(__dirname, 'preload.cjs');
 
-    console.log('🧭 preloadPath:', preloadPath);
+    console.log('preloadPath:', preloadPath);
     return preloadPath;
 }
